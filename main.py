@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 matplotlib.use('TkAgg')
 
-user_inp= int(input("Enter a number which you want to execute:\n1.Total runs scored by team.\n2.Top 10 batsman in Royal Challengers Bangalore\n"))
+user_inp= int(input("Enter a number which you want to execute:\n1.Total runs scored by team.\n2.Top 10 batsman in Royal Challengers Bangalore\n3.Foreign Umpire Analysis"))
 
 def calculate_total_runs(deliveries_reader):
     team_runs={}
@@ -44,7 +44,29 @@ def plot2(top_10_batsman_runs):
     plt.ylabel('Total_Runs')
     plt.show()
 
-def execute():
+def calculate_umpire_country(umpires_reader):
+    umpire_country={}
+    for umpire_row in umpires_reader:
+        if umpire_row[' country']!=' India':
+            if umpire_row[' country'] in umpire_country:
+                umpire_country[umpire_row[' country']] += 1
+            else:
+                umpire_country[umpire_row[' country']] = 1
+    return umpire_country
+
+def plot3(umpire_country):
+    plt.title('Foreign umpire analysis')
+    plt.pie(umpire_country.values(),labels=umpire_country.keys(),autopct="%.2f%%")
+    plt.show()
+
+def execute3():
+    with open('umpires.csv','r') as file:
+        umpires_reader=csv.DictReader(file)
+        umpire_country_details=calculate_umpire_country(umpires_reader)
+        plot3(umpire_country_details)
+        
+
+def execute1_2():
     with open('deliveries.csv','r') as file:
         deliveries_reader=csv.DictReader(file)
         if user_inp==1:
@@ -53,5 +75,8 @@ def execute():
         elif user_inp==2:
             top_10_batsman_runs=calculate_players_total_score(deliveries_reader)
             plot2(top_10_batsman_runs)
-
-execute()
+        
+if user_inp==1 or user_inp==2:
+    execute1_2()
+elif user_inp==3:
+    execute3()
